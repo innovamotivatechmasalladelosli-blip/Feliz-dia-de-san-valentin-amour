@@ -7,7 +7,23 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1" />
     <meta name="description" content="Un jardín de flores para mi amor. Un detalle que nunca se marchita. ¡Feliz Día de San Valentín!" />
-    <title>Feliz Día de San Valentín Amour</title>    
+    <title>Feliz Día de San Valentín Amour</title>
+    <script type="text/javascript">
+      // Single Page Apps for GitHub Pages
+      // https://github.com/rafgraph/spa-github-pages
+      // This script takes the current url and checks for a redirect query
+      // string from a 404.html redirect that was thrown by GitHub Pages
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) { 
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
