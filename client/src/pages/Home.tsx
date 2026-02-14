@@ -84,6 +84,19 @@ const Home = () => {
         <div className="absolute top-[10%] left-[10%] animate-pulse opacity-30"><Heart size={30} fill="#ffb3c1" color="#ffb3c1" /></div>
         <div className="absolute top-[20%] right-[15%] animate-bounce opacity-20"><Heart size={20} fill="#ff4d6d" color="#ff4d6d" /></div>
         <div className="absolute bottom-[20%] left-[15%] animate-bounce opacity-20"><Sparkles size={25} color="#ff758f" /></div>
+        
+        {/* Flores decorativas en el fondo */}
+        <div className="absolute bottom-0 left-0 right-0 h-40 flex items-end justify-around px-4 pb-4">
+          <div className="text-5xl animate-bounce opacity-70" style={{animationDelay: '0s'}}>🌹</div>
+          <div className="text-4xl animate-bounce opacity-60" style={{animationDelay: '0.2s'}}>🌷</div>
+          <div className="text-6xl animate-bounce opacity-75" style={{animationDelay: '0.4s'}}>🌸</div>
+          <div className="text-4xl animate-bounce opacity-65" style={{animationDelay: '0.1s'}}>🌺</div>
+          <div className="text-5xl animate-bounce opacity-70" style={{animationDelay: '0.3s'}}>🌻</div>
+          <div className="text-4xl animate-bounce opacity-60" style={{animationDelay: '0.5s'}}>🌹</div>
+          <div className="text-6xl animate-bounce opacity-75" style={{animationDelay: '0.2s'}}>🌼</div>
+          <div className="text-4xl animate-bounce opacity-65" style={{animationDelay: '0.4s'}}>🌷</div>
+          <div className="text-5xl animate-bounce opacity-70" style={{animationDelay: '0.1s'}}>🌸</div>
+        </div>
       </div>
 
       <div 
