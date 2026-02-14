@@ -27,13 +27,15 @@ const Home = () => {
   useEffect(() => {
     const randomFrase = frases[Math.floor(Math.random() * frases.length)];
     setFrase(randomFrase);
-    
-    // Reproducir música de fondo
-    if (audioRef.current) {
+  }, []);
+
+  useEffect(() => {
+    // Reproducir música de fondo cuando se muestra la página de inicio
+    if (!inSpace && audioRef.current) {
       audioRef.current.volume = 0.5;
       audioRef.current.play().catch(err => console.log('Audio autoplay blocked:', err));
     }
-  }, []);
+  }, [inSpace]);
 
   const handleAbrazo = () => {
     setIsHugging(true);
@@ -74,6 +76,10 @@ const Home = () => {
   };
 
   if (inSpace) {
+    // Pausar música cuando entras al juego espacial
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
     return <SolarSystem onBack={() => setInSpace(false)} />;
   }
 
