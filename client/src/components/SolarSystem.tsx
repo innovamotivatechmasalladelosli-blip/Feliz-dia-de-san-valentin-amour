@@ -277,6 +277,10 @@ export const SolarSystem: React.FC<SolarSystemProps> = ({ onBack }) => {
   const missionCompleted = sunClicked;
 
   const handleSunClick = () => {
+    // Solo permitir clic en el sol si ya se completaron todos los planetas
+    if (!allCollected) {
+      return;
+    }
     setSunClicked(true);
     
     // Crear explosión de "te amo" alrededor del sol
@@ -305,7 +309,7 @@ export const SolarSystem: React.FC<SolarSystemProps> = ({ onBack }) => {
 
   return (
     <div className="relative w-full h-screen bg-gradient-to-b from-black via-blue-900 to-black overflow-hidden">
-      <Canvas camera={{ position: [0, 30, 80], fov: 75 }}>
+      <Canvas camera={{ position: [0, 30, 80], fov: 75 }} onClick={(e) => e.stopPropagation()}>
         <SolarSystemScene onPlanetSelect={handlePlanetClick} collectedPlanets={collectedPlanets} onSunClick={handleSunClick} />
       </Canvas>
 
@@ -332,8 +336,8 @@ export const SolarSystem: React.FC<SolarSystemProps> = ({ onBack }) => {
             </div>
             <div className="hidden md:block h-12 w-px bg-pink-400/30"></div>
             <div>
-              <p className="text-xs text-gray-300">Misión</p>
-              <p className="text-pink-400 font-bold text-lg">{missionCompleted ? '1' : '0'}/1</p>
+              <p className="text-xs text-gray-300">Encuentrate</p>
+              <p className="text-pink-400 font-bold text-lg" style={{opacity: allCollected ? 1 : 0.5}}>{missionCompleted ? '1' : '0'}/1</p>
             </div>
           </div>
           <div className="flex-1 w-full md:flex-1 md:max-w-xs">
