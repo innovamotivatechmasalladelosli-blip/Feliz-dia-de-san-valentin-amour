@@ -139,7 +139,10 @@ const PlanetMesh: React.FC<PlanetMeshProps> = ({ planet, onPlanetClick, collecte
       <mesh
         ref={meshRef}
         position={[planet.distance, 0, 0]}
-        onClick={() => onPlanetClick(planet)}
+        onClick={(e) => {
+          e.stopPropagation();
+          onPlanetClick(planet);
+        }}
         onPointerEnter={() => setHovered(true)}
         onPointerLeave={() => setHovered(false)}
         scale={[planet.size, planet.size, planet.size]}
@@ -201,7 +204,10 @@ const SolarSystemScene: React.FC<SolarSystemSceneProps> = ({ onPlanetSelect, col
       <Stars radius={300} depth={100} count={8000} factor={6} />
       
       {/* Sol */}
-      <mesh ref={sunRef} onClick={onSunClick}>
+      <mesh ref={sunRef} onClick={(e) => {
+        e.stopPropagation();
+        onSunClick();
+      }}>
         <sphereGeometry args={[2, 32, 32]} />
         <meshBasicMaterial color="#fdb813" />
       </mesh>
@@ -248,6 +254,16 @@ export const SolarSystem: React.FC<SolarSystemProps> = ({ onBack }) => {
   const [score, setScore] = useState(0);
   const [showInstructions, setShowInstructions] = useState(true);
   const [sunClicked, setSunClicked] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handlePlanetClick = (planet: Planet) => {
     if (!collectedPlanets.includes(planet.id)) {
@@ -258,6 +274,7 @@ export const SolarSystem: React.FC<SolarSystemProps> = ({ onBack }) => {
   };
 
   const allCollected = collectedPlanets.length === planets.length;
+  const missionCompleted = sunClicked;
 
   const handleSunClick = () => {
     setSunClicked(true);
@@ -282,8 +299,6 @@ export const SolarSystem: React.FC<SolarSystemProps> = ({ onBack }) => {
 
       if (Date.now() < end) {
         requestAnimationFrame(frame);
-      } else {
-        setSunClicked(false);
       }
     }());
   };
@@ -297,53 +312,58 @@ export const SolarSystem: React.FC<SolarSystemProps> = ({ onBack }) => {
       {/* Botón volver */}
       <button
         onClick={onBack}
-        className="absolute top-6 left-6 bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all z-50 flex items-center gap-2"
+        className="absolute top-4 left-4 md:top-6 md:left-6 bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-lg shadow-lg transition-all z-50 text-sm md:text-base"
       >
         ← Volver
       </button>
 
-      {/* Panel de puntuación y progreso - Horizontal en la parte superior */}
-      <div className="absolute top-6 left-6 right-6 bg-black/70 backdrop-blur-sm border border-pink-400 rounded-lg p-4 text-white z-50">
-        <div className="flex items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
+      {/* Panel de puntuación y progreso - Responsive */}
+      <div className="absolute top-16 md:top-6 left-4 right-4 md:left-6 md:right-6 bg-black/70 backdrop-blur-sm border border-pink-400 rounded-lg p-3 md:p-4 text-white z-50">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-6">
+          <div className="flex items-center gap-3 md:gap-4 w-full md:w-auto">
             <div>
-              <p className="text-pink-400 font-bold text-sm">🎮 JUEGO CÓSMICO</p>
+              <p className="text-pink-400 font-bold text-xs md:text-sm">🎮 JUEGO CÓSMICO</p>
               <p className="text-xs text-gray-300 mt-1">Puntos: <span className="text-pink-400 font-bold">{score}</span></p>
             </div>
-            <div className="h-12 w-px bg-pink-400/30"></div>
+            <div className="hidden md:block h-12 w-px bg-pink-400/30"></div>
             <div>
-              <p className="text-xs text-gray-300">Descubiertos</p>
+              <p className="text-xs text-gray-300">Planetas</p>
               <p className="text-pink-400 font-bold text-lg">{collectedPlanets.length}/7</p>
             </div>
+            <div className="hidden md:block h-12 w-px bg-pink-400/30"></div>
+            <div>
+              <p className="text-xs text-gray-300">Misión</p>
+              <p className="text-pink-400 font-bold text-lg">{missionCompleted ? '1' : '0'}/1</p>
+            </div>
           </div>
-          <div className="flex-1 max-w-xs">
-            <div className="w-full bg-gray-700 rounded-full h-3">
+          <div className="flex-1 w-full md:flex-1 md:max-w-xs">
+            <div className="w-full bg-gray-700 rounded-full h-2 md:h-3">
               <div
-                className="bg-gradient-to-r from-pink-400 to-pink-600 h-3 rounded-full transition-all"
-                style={{ width: `${(collectedPlanets.length / 7) * 100}%` }}
+                className="bg-gradient-to-r from-pink-400 to-pink-600 h-2 md:h-3 rounded-full transition-all"
+                style={{ width: `${((collectedPlanets.length + (missionCompleted ? 1 : 0)) / 8) * 100}%` }}
               ></div>
             </div>
           </div>
-          {allCollected && (
-            <div className="text-pink-400 font-bold text-sm">¡Completado! 🎉</div>
+          {allCollected && missionCompleted && (
+            <div className="text-pink-400 font-bold text-xs md:text-sm">¡Todo completado! 🎉</div>
           )}
         </div>
       </div>
 
       {/* Panel de información del planeta */}
       {selectedPlanet && (
-        <div className="absolute bottom-6 left-6 right-6 bg-black/80 backdrop-blur-sm border border-pink-400 rounded-lg p-6 max-w-lg text-white z-50 animate-in fade-in slide-in-from-bottom-4 duration-300">
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <h2 className="text-2xl font-bold text-pink-400 mb-2">{selectedPlanet.name}</h2>
-              <p className="text-lg italic text-pink-100 mb-4">"{selectedPlanet.phrase}"</p>
+        <div className="absolute bottom-4 left-4 right-4 md:bottom-6 md:left-6 md:right-6 bg-black/80 backdrop-blur-sm border border-pink-400 rounded-lg p-4 md:p-6 text-white z-50 animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1 min-w-0">
+              <h2 className="text-xl md:text-2xl font-bold text-pink-400 mb-2">{selectedPlanet.name}</h2>
+              <p className="text-base md:text-lg italic text-pink-100 mb-4 break-words">"{selectedPlanet.phrase}"</p>
               {collectedPlanets.includes(selectedPlanet.id) && (
-                <p className="text-sm text-pink-300">✓ Descubierto</p>
+                <p className="text-xs md:text-sm text-pink-300">✓ Descubierto</p>
               )}
             </div>
             <button
               onClick={() => setSelectedPlanet(null)}
-              className="text-pink-300 hover:text-pink-200 text-2xl font-bold"
+              className="text-pink-300 hover:text-pink-200 text-2xl font-bold flex-shrink-0"
             >
               ✕
             </button>
@@ -353,33 +373,52 @@ export const SolarSystem: React.FC<SolarSystemProps> = ({ onBack }) => {
 
       {/* Instrucciones - Mejorado y con botón de cerrar */}
       {showInstructions && (
-        <div className="absolute top-24 right-6 bg-black/80 backdrop-blur-sm border border-pink-400 rounded-lg p-4 text-white text-xs max-w-xs z-50 shadow-lg">
+        <div className="absolute top-40 md:top-24 right-4 left-4 md:left-auto md:right-6 bg-black/80 backdrop-blur-sm border border-pink-400 rounded-lg p-3 md:p-4 text-white text-xs md:text-xs max-w-xs z-50 shadow-lg">
           <div className="flex items-start justify-between mb-3">
             <p className="text-pink-300 font-bold text-sm">📖 CÓMO JUGAR</p>
             <button
               onClick={() => setShowInstructions(false)}
-              className="text-pink-300 hover:text-pink-100 font-bold text-lg leading-none"
+              className="text-pink-300 hover:text-pink-100 font-bold text-lg leading-none flex-shrink-0"
             >
               ✕
             </button>
           </div>
           <ul className="space-y-2 text-xs">
-            <li className="flex items-start gap-2">
-              <span className="text-pink-400 mt-0.5">•</span>
-              <span>Haz clic en los planetas para descubrirlos</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-pink-400 mt-0.5">•</span>
-              <span>Colecciona todos los 7 planetas</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-pink-400 mt-0.5">•</span>
-              <span>Usa el ratón para rotar y hacer zoom</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-pink-400 mt-0.5">⭐</span>
-              <span className="text-pink-300 font-bold">Misión secreta: ¡Haz clic en el sol!</span>
-            </li>
+            {isMobile ? (
+              <>
+                <li className="flex items-start gap-2">
+                  <span className="text-pink-400 mt-0.5">•</span>
+                  <span>Toca los planetas para descubrirlos</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-pink-400 mt-0.5">•</span>
+                  <span>Desliza para rotar la vista</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-pink-400 mt-0.5">•</span>
+                  <span>Pellizca para hacer zoom</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-pink-400 mt-0.5">•</span>
+                  <span>Colecciona los 7 planetas</span>
+                </li>
+              </>
+            ) : (
+              <>
+                <li className="flex items-start gap-2">
+                  <span className="text-pink-400 mt-0.5">•</span>
+                  <span>Haz clic en los planetas para descubrirlos</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-pink-400 mt-0.5">•</span>
+                  <span>Colecciona todos los 7 planetas</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-pink-400 mt-0.5">•</span>
+                  <span>Usa el ratón para rotar y hacer zoom</span>
+                </li>
+              </>
+            )}
           </ul>
         </div>
       )}
@@ -387,9 +426,9 @@ export const SolarSystem: React.FC<SolarSystemProps> = ({ onBack }) => {
       {/* Mensaje de misión secreta completada */}
       {sunClicked && (
         <div className="fixed inset-0 flex items-center justify-center z-[200] pointer-events-none">
-          <div className="text-center animate-in zoom-in fade-in duration-300">
-            <p className="text-4xl font-bold text-pink-400 mb-4">¡DESCUBRISTE LA MISIÓN SECRETA! 🎉</p>
-            <p className="text-3xl text-pink-300 font-bold">¡TE AMO! 💕</p>
+          <div className="text-center animate-in zoom-in fade-in duration-300 px-4">
+            <p className="text-2xl md:text-4xl font-bold text-pink-400 mb-4">¡DESCUBRISTE LA MISIÓN SECRETA! 🎉</p>
+            <p className="text-xl md:text-3xl text-pink-300 font-bold">¡TE AMO! 💕</p>
           </div>
         </div>
       )}
