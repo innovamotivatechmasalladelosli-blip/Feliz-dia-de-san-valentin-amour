@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Text, Stars } from '@react-three/drei';
 import * as THREE from 'three';
+import confetti from 'canvas-confetti';
 
 interface Planet {
   id: number;
@@ -183,9 +184,10 @@ const PlanetMesh: React.FC<PlanetMeshProps> = ({ planet, onPlanetClick, collecte
 interface SolarSystemSceneProps {
   onPlanetSelect: (planet: Planet) => void;
   collectedPlanets: number[];
+  onSunClick: () => void;
 }
 
-const SolarSystemScene: React.FC<SolarSystemSceneProps> = ({ onPlanetSelect, collectedPlanets }) => {
+const SolarSystemScene: React.FC<SolarSystemSceneProps> = ({ onPlanetSelect, collectedPlanets, onSunClick }) => {
   const sunRef = useRef<THREE.Mesh>(null);
 
   useFrame(() => {
@@ -199,7 +201,7 @@ const SolarSystemScene: React.FC<SolarSystemSceneProps> = ({ onPlanetSelect, col
       <Stars radius={300} depth={100} count={8000} factor={6} />
       
       {/* Sol */}
-      <mesh ref={sunRef}>
+      <mesh ref={sunRef} onClick={onSunClick}>
         <sphereGeometry args={[2, 32, 32]} />
         <meshBasicMaterial color="#fdb813" />
       </mesh>
@@ -244,6 +246,8 @@ export const SolarSystem: React.FC<SolarSystemProps> = ({ onBack }) => {
   const [selectedPlanet, setSelectedPlanet] = useState<Planet | null>(null);
   const [collectedPlanets, setCollectedPlanets] = useState<number[]>([]);
   const [score, setScore] = useState(0);
+  const [showInstructions, setShowInstructions] = useState(true);
+  const [sunClicked, setSunClicked] = useState(false);
 
   const handlePlanetClick = (planet: Planet) => {
     if (!collectedPlanets.includes(planet.id)) {
@@ -255,10 +259,39 @@ export const SolarSystem: React.FC<SolarSystemProps> = ({ onBack }) => {
 
   const allCollected = collectedPlanets.length === planets.length;
 
+  const handleSunClick = () => {
+    setSunClicked(true);
+    
+    // Crear explosión de "te amo" alrededor del sol
+    const duration = 3 * 1000;
+    const end = Date.now() + duration;
+
+    (function frame() {
+      for (let i = 0; i < 8; i++) {
+        confetti({
+          particleCount: 15,
+          angle: (i / 8) * 360,
+          spread: 45,
+          origin: { x: 0.5, y: 0.5 },
+          colors: ['#ff69b4', '#ff1493', '#ff69b4', '#ff1493'],
+          zIndex: 9999,
+          shapes: ['circle'],
+          scalar: 1.5
+        });
+      }
+
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      } else {
+        setSunClicked(false);
+      }
+    }());
+  };
+
   return (
     <div className="relative w-full h-screen bg-gradient-to-b from-black via-blue-900 to-black overflow-hidden">
       <Canvas camera={{ position: [0, 30, 80], fov: 75 }}>
-        <SolarSystemScene onPlanetSelect={handlePlanetClick} collectedPlanets={collectedPlanets} />
+        <SolarSystemScene onPlanetSelect={handlePlanetClick} collectedPlanets={collectedPlanets} onSunClick={handleSunClick} />
       </Canvas>
 
       {/* Botón volver */}
@@ -318,15 +351,48 @@ export const SolarSystem: React.FC<SolarSystemProps> = ({ onBack }) => {
         </div>
       )}
 
-      {/* Instrucciones - Compacto en la parte superior derecha */}
-      <div className="absolute top-24 right-6 bg-black/60 backdrop-blur-sm border border-pink-300 rounded-lg p-3 text-white text-xs max-w-xs z-50">
-        <p className="text-pink-300 font-bold mb-2 text-sm">📖 INSTRUCCIONES</p>
-        <ul className="space-y-1 text-xs">
-          <li>✓ Haz clic en planetas</li>
-          <li>✓ Colecciona los 7</li>
-          <li>✓ Gira con el ratón</li>
-        </ul>
-      </div>
+      {/* Instrucciones - Mejorado y con botón de cerrar */}
+      {showInstructions && (
+        <div className="absolute top-24 right-6 bg-black/80 backdrop-blur-sm border border-pink-400 rounded-lg p-4 text-white text-xs max-w-xs z-50 shadow-lg">
+          <div className="flex items-start justify-between mb-3">
+            <p className="text-pink-300 font-bold text-sm">📖 CÓMO JUGAR</p>
+            <button
+              onClick={() => setShowInstructions(false)}
+              className="text-pink-300 hover:text-pink-100 font-bold text-lg leading-none"
+            >
+              ✕
+            </button>
+          </div>
+          <ul className="space-y-2 text-xs">
+            <li className="flex items-start gap-2">
+              <span className="text-pink-400 mt-0.5">•</span>
+              <span>Haz clic en los planetas para descubrirlos</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-pink-400 mt-0.5">•</span>
+              <span>Colecciona todos los 7 planetas</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-pink-400 mt-0.5">•</span>
+              <span>Usa el ratón para rotar y hacer zoom</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-pink-400 mt-0.5">⭐</span>
+              <span className="text-pink-300 font-bold">Misión secreta: ¡Haz clic en el sol!</span>
+            </li>
+          </ul>
+        </div>
+      )}
+
+      {/* Mensaje de misión secreta completada */}
+      {sunClicked && (
+        <div className="fixed inset-0 flex items-center justify-center z-[200] pointer-events-none">
+          <div className="text-center animate-in zoom-in fade-in duration-300">
+            <p className="text-4xl font-bold text-pink-400 mb-4">¡DESCUBRISTE LA MISIÓN SECRETA! 🎉</p>
+            <p className="text-3xl text-pink-300 font-bold">¡TE AMO! 💕</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
