@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Heart, Sparkles, Send, Rocket } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { SolarSystem } from '@/components/SolarSystem';
+
+const MUSIC_URL = 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663208866167/JdRYuXKIzpRqoCZn.mp3';
 
 const Home = () => {
   const [frase, setFrase] = useState('');
@@ -9,6 +11,7 @@ const Home = () => {
   const [isHugging, setIsHugging] = useState(false);
   const [showHugEmoji, setShowHugEmoji] = useState(false);
   const [inSpace, setInSpace] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const frases = [
     "Eres el pensamiento más bonito de mi día. ❤️",
@@ -24,6 +27,12 @@ const Home = () => {
   useEffect(() => {
     const randomFrase = frases[Math.floor(Math.random() * frases.length)];
     setFrase(randomFrase);
+    
+    // Reproducir música de fondo
+    if (audioRef.current) {
+      audioRef.current.volume = 0.5;
+      audioRef.current.play().catch(err => console.log('Audio autoplay blocked:', err));
+    }
   }, []);
 
   const handleAbrazo = () => {
@@ -70,6 +79,14 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-[#fff5f7] flex flex-col items-center justify-center p-6 relative overflow-hidden font-sans">
+      {/* Audio de fondo */}
+      <audio 
+        ref={audioRef}
+        src={MUSIC_URL}
+        loop
+        autoPlay
+        style={{ display: 'none' }}
+      />
       
       {showHugEmoji && (
         <div className="fixed inset-0 flex items-center justify-center z-[100] pointer-events-none animate-in zoom-in fade-in duration-300">

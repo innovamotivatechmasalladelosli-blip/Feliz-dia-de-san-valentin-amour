@@ -265,10 +265,35 @@ export const SolarSystem: React.FC<SolarSystemProps> = ({ onBack }) => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  const playSound = (frequency: number, duration: number) => {
+    try {
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.value = frequency;
+      oscillator.type = 'sine';
+      
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + duration);
+    } catch (e) {
+      console.log('Audio context not available');
+    }
+  };
+
   const handlePlanetClick = (planet: Planet) => {
     if (!collectedPlanets.includes(planet.id)) {
       setCollectedPlanets([...collectedPlanets, planet.id]);
       setScore(score + 10);
+      // Sonido de descubrimiento
+      playSound(800, 0.3);
+      setTimeout(() => playSound(1000, 0.3), 150);
     }
     setSelectedPlanet(planet);
   };
@@ -282,6 +307,11 @@ export const SolarSystem: React.FC<SolarSystemProps> = ({ onBack }) => {
       return;
     }
     setSunClicked(true);
+    
+    // Sonido de misión completada
+    playSound(523, 0.2);
+    setTimeout(() => playSound(659, 0.2), 150);
+    setTimeout(() => playSound(784, 0.4), 300);
     
     // Crear explosión de "te amo" alrededor del sol
     const duration = 3 * 1000;
