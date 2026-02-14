@@ -269,24 +269,32 @@ export const SolarSystem: React.FC<SolarSystemProps> = ({ onBack }) => {
         ← Volver
       </button>
 
-      {/* Panel de puntuación y progreso */}
-      <div className="absolute top-6 right-6 bg-black/70 backdrop-blur-sm border border-pink-400 rounded-lg p-6 text-white z-50 max-w-sm">
-        <h3 className="text-pink-400 font-bold text-lg mb-3">🎮 JUEGO CÓSMICO</h3>
-        <div className="space-y-2 text-sm">
-          <p>Puntos: <span className="text-pink-400 font-bold text-lg">{score}</span></p>
-          <p>Planetas descubiertos: <span className="text-pink-400 font-bold">{collectedPlanets.length}/7</span></p>
-          <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
-            <div
-              className="bg-gradient-to-r from-pink-400 to-pink-600 h-2 rounded-full transition-all"
-              style={{ width: `${(collectedPlanets.length / 7) * 100}%` }}
-            ></div>
+      {/* Panel de puntuación y progreso - Horizontal en la parte superior */}
+      <div className="absolute top-6 left-6 right-6 bg-black/70 backdrop-blur-sm border border-pink-400 rounded-lg p-4 text-white z-50">
+        <div className="flex items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div>
+              <p className="text-pink-400 font-bold text-sm">🎮 JUEGO CÓSMICO</p>
+              <p className="text-xs text-gray-300 mt-1">Puntos: <span className="text-pink-400 font-bold">{score}</span></p>
+            </div>
+            <div className="h-12 w-px bg-pink-400/30"></div>
+            <div>
+              <p className="text-xs text-gray-300">Descubiertos</p>
+              <p className="text-pink-400 font-bold text-lg">{collectedPlanets.length}/7</p>
+            </div>
           </div>
+          <div className="flex-1 max-w-xs">
+            <div className="w-full bg-gray-700 rounded-full h-3">
+              <div
+                className="bg-gradient-to-r from-pink-400 to-pink-600 h-3 rounded-full transition-all"
+                style={{ width: `${(collectedPlanets.length / 7) * 100}%` }}
+              ></div>
+            </div>
+          </div>
+          {allCollected && (
+            <div className="text-pink-400 font-bold text-sm">¡Completado! 🎉</div>
+          )}
         </div>
-        {allCollected && (
-          <div className="mt-4 p-3 bg-pink-500/20 border border-pink-400 rounded text-center">
-            <p className="text-pink-300 font-bold">¡Completaste el juego! 🎉</p>
-          </div>
-        )}
       </div>
 
       {/* Panel de información del planeta */}
@@ -310,14 +318,13 @@ export const SolarSystem: React.FC<SolarSystemProps> = ({ onBack }) => {
         </div>
       )}
 
-      {/* Instrucciones */}
-      <div className="absolute bottom-6 right-6 bg-black/60 backdrop-blur-sm border border-pink-300 rounded-lg p-4 text-white text-sm max-w-xs z-50">
-        <p className="text-pink-300 font-bold mb-2">📖 CÓMO JUGAR</p>
-        <ul className="text-xs space-y-1">
-          <li>• Haz clic en los planetas para descubrirlos</li>
-          <li>• Colecciona todos los 7 planetas</li>
-          <li>• Usa el ratón para rotar y hacer zoom</li>
-          <li>• Gana puntos por cada descubrimiento</li>
+      {/* Instrucciones - Compacto en la parte superior derecha */}
+      <div className="absolute top-24 right-6 bg-black/60 backdrop-blur-sm border border-pink-300 rounded-lg p-3 text-white text-xs max-w-xs z-50">
+        <p className="text-pink-300 font-bold mb-2 text-sm">📖 INSTRUCCIONES</p>
+        <ul className="space-y-1 text-xs">
+          <li>✓ Haz clic en planetas</li>
+          <li>✓ Colecciona los 7</li>
+          <li>✓ Gira con el ratón</li>
         </ul>
       </div>
     </div>
