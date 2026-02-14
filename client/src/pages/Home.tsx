@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Heart, Sparkles, Send } from 'lucide-react';
+import { Heart, Sparkles, Send, Rocket } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { SolarSystem } from '@/components/SolarSystem';
 
 const Home = () => {
   const [frase, setFrase] = useState('');
   const [showNote, setShowNote] = useState(false);
   const [isHugging, setIsHugging] = useState(false);
   const [showHugEmoji, setShowHugEmoji] = useState(false);
+  const [inSpace, setInSpace] = useState(false);
 
   const frases = [
     "Eres el pensamiento más bonito de mi día. ❤️",
@@ -61,6 +63,10 @@ const Home = () => {
       }
     }());
   };
+
+  if (inSpace) {
+    return <SolarSystem onBack={() => setInSpace(false)} />;
+  }
 
   return (
     <div className="min-h-screen bg-[#fff5f7] flex flex-col items-center justify-center p-6 relative overflow-hidden font-sans">
@@ -121,6 +127,14 @@ const Home = () => {
             className="w-full text-pink-400 font-semibold py-2 hover:text-pink-600 transition-colors flex items-center justify-center gap-2 text-sm"
           >
             <Send size={14} /> {showNote ? "Cerrar cartita" : "Tengo una nota para ti..."}
+          </button>
+
+          <button
+            onClick={() => setInSpace(true)}
+            className="w-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-90 flex items-center justify-center gap-3 mt-6"
+          >
+            <Rocket size={22} />
+            <span className="text-lg">¡Salir de la Tierra!</span>
           </button>
         </div>
 
