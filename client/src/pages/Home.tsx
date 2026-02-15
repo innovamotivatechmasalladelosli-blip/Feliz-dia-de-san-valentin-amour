@@ -31,10 +31,23 @@ const Home = () => {
 
   useEffect(() => {
     // Reproducir música de fondo cuando se muestra la página de inicio
-    if (!inSpace && audioRef.current) {
-      audioRef.current.volume = 0.5;
-      audioRef.current.play().catch(err => console.log('Audio autoplay blocked:', err));
-    }
+    const playAudio = () => {
+      if (!inSpace && audioRef.current) {
+        audioRef.current.volume = 0.5;
+        audioRef.current.play().catch(err => console.log('Audio autoplay blocked:', err));
+      }
+    };
+
+    playAudio();
+    
+    // Intentar reproducir al primer clic si el navegador bloqueó el autoplay
+    window.addEventListener('click', playAudio, { once: true });
+    window.addEventListener('touchstart', playAudio, { once: true });
+
+    return () => {
+      window.removeEventListener('click', playAudio);
+      window.removeEventListener('touchstart', playAudio);
+    };
   }, [inSpace]);
 
   const handleAbrazo = () => {
@@ -119,6 +132,7 @@ const Home = () => {
           <div className="text-6xl animate-bounce opacity-75" style={{animationDelay: '0.2s'}}>🌼</div>
           <div className="text-4xl animate-bounce opacity-65" style={{animationDelay: '0.4s'}}>🌷</div>
           <div className="text-5xl animate-bounce opacity-70" style={{animationDelay: '0.1s'}}>🌸</div>
+          <div className="text-5xl animate-bounce opacity-70" style={{animationDelay: '0.3s'}}>🌹</div>
         </div>
       </div>
 
