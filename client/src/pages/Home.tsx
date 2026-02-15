@@ -128,8 +128,8 @@ const Home = () => {
           <div className="text-5xl animate-bounce opacity-70" style={{animationDelay: '0.1s'}}>🌸</div>
           <div className="text-5xl animate-bounce opacity-70" style={{animationDelay: '0.3s'}}>🌹</div>
         </div>
-        {/* Margarita fija en la esquina izquierda ajustada para simetría perfecta y no tapar */}
-        <div className="absolute bottom-[-10px] left-[-30px] text-7xl animate-bounce opacity-70" style={{animationDelay: '0.6s', zIndex: 0}}>🌼</div>
+        {/* Margarita fija en la esquina izquierda con simetría perfecta respecto a la de la derecha */}
+        <div className="absolute bottom-[-10px] left-[-30px] text-6xl animate-bounce opacity-75" style={{animationDelay: '0.2s', zIndex: 0}}>🌼</div>
       </div>
 
       <div 
