@@ -10,10 +10,9 @@ import Home from "./pages/Home";
 function Router() {
   return (
     <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
-      <Route component={NotFound} />
+      <Route path="/" component={Home} />
+      <Route path="/Feliz-dia-de-san-valentin-amour/" component={Home} />
+      <Route component={Home} />
     </Switch>
   );
 }
