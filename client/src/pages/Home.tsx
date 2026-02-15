@@ -133,6 +133,7 @@ const Home = () => {
           <div className="text-4xl animate-bounce opacity-65" style={{animationDelay: '0.4s'}}>🌷</div>
           <div className="text-5xl animate-bounce opacity-70" style={{animationDelay: '0.1s'}}>🌸</div>
           <div className="text-5xl animate-bounce opacity-70" style={{animationDelay: '0.3s'}}>🌹</div>
+          <div className="text-5xl animate-bounce opacity-70" style={{animationDelay: '0.5s'}}>🌻</div>
         </div>
       </div>
 
