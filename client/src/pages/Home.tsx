@@ -177,7 +177,7 @@ const Home = () => {
         {showNote && (
           <div className="mt-6 p-6 bg-pink-50/80 rounded-2xl text-left border-l-4 border-[#ff4d6d] animate-in slide-in-from-bottom-2 fade-in duration-500">
             <p className="text-[#8c5e6d] text-sm leading-relaxed italic">
-              "Sé que mañana no estaremos juntos físicamente, pero mi corazón está contigo. Eres mi flor favorita y quería que tuvieras algo que no se marchitara. ¡Te amo muchísimo, <strong>amour</strong>!" 💖
+              "Aunque no nos veamos ahora, <strong>amour</strong>, quiero que sepas que te llevo siempre en mi corazoncito, en mi mente y en todo de mí, porque eres mi mundo entero y súper especial para mí. Eres mi flor favorita y quería que tuvieras algo que no se marchitara. Bueno, espero que te guste, <strong>amour</strong>, y que tengas un gran día, mi vida. ¡Feliz Día de San Valentín! Te amo muchísimo, <strong>amour</strong>." 💖
             </p>
           </div>
         )}
